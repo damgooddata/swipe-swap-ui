@@ -18,6 +18,7 @@ export default function UserLanding() {
     berries_boosted: 0
   });
 
+
   const token = localStorage.getItem('token');
 
   useEffect(() => {
