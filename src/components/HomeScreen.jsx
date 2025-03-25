@@ -15,10 +15,15 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (registered) {
-      setHomeMessage('Registration successful! Please check your email to verify your account before logging in.');
-    } else if (messageParam) {
-      setHomeMessage(decodeURIComponent(messageParam));
-    }
+	  setHomeMessage('Registration successful! Please check your email to verify your account before logging in.');
+	} else if (messageParam) {
+	  const decodedMsg = decodeURIComponent(messageParam);
+	  if (decodedMsg === 'Email already verified') {
+		setHomeMessage('Email already verified. Please log in.');
+	  } else {
+		setHomeMessage(decodedMsg);
+	  }
+	}
   }, [registered, messageParam]);
 
   const handleResend = async () => {
@@ -26,14 +31,17 @@ export default function HomeScreen() {
       const res = await axios.post('https://craigslistclone-app2.ue.r.appspot.com/resend-verification', { email });
       const msg = res.data.message || 'Verification email resent!';
       navigate(`/?msg=${encodeURIComponent(msg)}`);
+	  //navigate(`/`);
+	  setShowModal(false);
     } catch (error) {
       const errorMsg = 'Failed to resend verification email.';
       navigate(`/?msg=${encodeURIComponent(errorMsg)}`);
+	  setShowModal(false);
     }
   };
 
   const handleCloseModal = () => {
-    navigate('/');
+      setShowModal(false);
   };
 
   return (

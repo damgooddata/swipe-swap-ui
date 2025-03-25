@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserLanding() {
   const [userInfo, setUserInfo] = useState(null);
@@ -28,7 +29,7 @@ export default function UserLanding() {
   const [pendingStripeCheckout, setPendingStripeCheckout] = useState(null);
   const [showStripeConfirm, setShowStripeConfirm] = useState(false);
 
-
+  const navigate = useNavigate();	
 
   const token = localStorage.getItem('token');
 
@@ -97,8 +98,10 @@ export default function UserLanding() {
 	  }
 	};
 
-
-
+	const handleLogout = () => {
+	  localStorage.removeItem('token');  // Clear token
+	  navigate('/');  // Redirect to home or login page
+	};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +119,13 @@ export default function UserLanding() {
   if (!userInfo) return <p className="text-center mt-10">Loading user info...</p>;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen relative">
+	  <button
+		onClick={handleLogout}
+		className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+	  >
+		Logout
+	  </button>
       <h2 className="text-2xl font-bold mb-4">Welcome, {userInfo.email}</h2>
       <p className="mb-4">Subscription Level: {userInfo.subscription_level}</p>
 
@@ -126,10 +135,18 @@ export default function UserLanding() {
       >
         Create Listing
       </button>
-
+	  
       {showForm && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-96 max-h-screen overflow-y-auto">
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-96 max-h-screen overflow-y-auto relative">
+			  <button 
+				type="button" 
+				onClick={() => setShowForm(false)} 
+				className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+			  >
+				✕
+			  </button>
+			  
             <h3 className="text-lg font-bold mb-4">New Listing</h3>
 
             {/* Title */}
